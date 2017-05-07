@@ -1,0 +1,14 @@
+.dropdown-toggle {
+	border-radius: 0px !important;
+}
+
+button {
+	outline: none !important;
+}
+
+/* STUDY PANEL*/
+.study-textarea-obscured {
+	background-color: lightgray !important;
+	color: lightgray !important;
+	user-select: none;
+}
