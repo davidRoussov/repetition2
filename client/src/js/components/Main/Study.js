@@ -13,6 +13,11 @@ export default class Study extends React.Component {
   }
 
   componentWillMount() {
+    this.setCurrentProblem();
+    StudyStore.on('change', this.setCurrentProblem.bind(this));
+  }
+
+  setCurrentProblem() {
     StudyStore.fetchQuestion(question => {
       this.setState({
         questionHidden: true,
@@ -20,7 +25,7 @@ export default class Study extends React.Component {
       });
     });
   }
-  
+
   flipQuestion(event) {
     let button = $(event.target);
     let textarea = $("#studyTextarea");

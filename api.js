@@ -14,7 +14,7 @@ module.exports = function(app) {
     });
 
     app.post('/api/question/response', (request, response) => {
-        let type = request.body.response.type;
+        let type = request.body.userResponse.type;
         let currentTopic = request.query.topic;
 
         let promise = new Promise((resolve, reject) => {
@@ -37,6 +37,17 @@ module.exports = function(app) {
         }, error => {
             response.sendStatus(404);
         })
+    });
+
+    app.get('/api/topics', (request, response) => {
+        db.findOne({}, function(error, doc) {
+            response.json(
+                doc.topics
+                    .map(topic => ({
+                        _id: topic._id,
+                        topicName: topic.topicName
+                    })));
+        });
     });
 }
 

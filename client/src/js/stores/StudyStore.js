@@ -20,14 +20,14 @@ class StudyStore extends EventEmitter {
 		}
 	}
 
-	submitResponse(response) {
+	submitResponse(userResponse) {
 		fetch('/api/question/response?topic=sBnmbJJgygxda8Sud', {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
 			},
 			method: "POST",
-			body: JSON.stringify( {response: response} )
+			body: JSON.stringify( {userResponse: userResponse} )
 		})
 		.then(response => {
 			this.emit("change");
