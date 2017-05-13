@@ -10,20 +10,28 @@ export default class Study extends React.Component {
   constructor() {
     super();
     this.state = {};
+    this.state.currentTopicID = "";
   }
 
   componentWillMount() {
     this.setCurrentProblem();
-    StudyStore.on('change', this.setCurrentProblem.bind(this));
+    StudyStore.on('change', topicID => {
+      this.setCurrentProblem.bind(this, topicID);
+    });
   }
 
-  setCurrentProblem() {
-    StudyStore.fetchQuestion(question => {
-      this.setState({
-        questionHidden: true,
-        current: question
+  setCurrentProblem(topicID) {
+    this.setState({currentTopicID: topicID}, function() {
+
+      StudyStore.fetchQuestion(this.state.currentTopicID, question => {
+        this.setState({
+          questionHidden: true,
+          current: question
+        });
       });
+
     });
+
   }
 
   flipQuestion(event) {
@@ -58,7 +66,7 @@ export default class Study extends React.Component {
   }
 
   responseSubmission(response) {
-    StudyActions.submitResponse(response);
+    StudyActions.submitResponse(response, this.state.currentTopicID);
   }
 
   render() {

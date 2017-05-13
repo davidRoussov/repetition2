@@ -2,8 +2,8 @@ import { EventEmitter } from "events";
 import dispatcher from "../dispatcher";
 
 class StudyStore extends EventEmitter {
-	fetchQuestion(callback) {
-		return fetch('/api/question?topic=sBnmbJJgygxda8Sud', {
+	fetchQuestion(topicID, callback) {
+		return fetch('/api/question?topic=' + topicID, {
 			accept: 'application/json'
 		})
 		.then(checkStatus)
@@ -20,8 +20,8 @@ class StudyStore extends EventEmitter {
 		}
 	}
 
-	submitResponse(userResponse) {
-		fetch('/api/question/response?topic=sBnmbJJgygxda8Sud', {
+	submitResponse(userResponse, topicID) {
+		fetch('/api/question/response?topic=' + topicID, {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -30,12 +30,16 @@ class StudyStore extends EventEmitter {
 			body: JSON.stringify( {userResponse: userResponse} )
 		})
 		.then(response => {
-			this.emit("change");
+			this.emit("change", topicID);
 		})
 	}
 
 	handleActions(action) {
-		this.submitResponse(action);
+		if (action.type === "good" || action.type === "bad" || action.type === "pass") {
+			this.submitResponse(action.type, action.topicID);
+		} else if (action.type === "CHOOSE_TOPIC") {
+			this.emit("change", action.topicID);
+		}
 	}
 }
 

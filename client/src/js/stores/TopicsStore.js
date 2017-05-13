@@ -21,7 +21,9 @@ class TopicsStore extends EventEmitter {
 	}
 
 	handleActions(action) {
-		this.submitResponse(action);
+		if (action.type === "CHOOSE_TOPIC") {
+			
+		}
 	}
 }
 

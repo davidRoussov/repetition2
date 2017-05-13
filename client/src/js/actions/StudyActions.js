@@ -1,8 +1,9 @@
 import dispatcher from "../dispatcher";
 
-export function submitResponse(response) {
+export function submitResponse(response, topicID) {
 	dispatcher.dispatch({
-		type: response
+		type: response,
+		topicID: topicID
 	});
 }
 

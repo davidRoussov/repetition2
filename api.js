@@ -5,38 +5,47 @@ var Datastore = require('nedb')
 module.exports = function(app) {
     app.get('/api/question', (request, response) => {
         db.findOne({}, function(error, doc) {
-            response.json(
-                doc.topics
-                    .find(topic => topic._id === request.query.topic)
-                    .content
-                    .sort(compare)[0])
+            try {
+                response.json(
+                    doc.topics
+                        .find(topic => topic._id === request.query.topic)
+                        .content
+                        .sort(compare)[0])
+            } catch(err) {
+                response.json({question: "", answer: ""});
+            }
         });
     });
 
     app.post('/api/question/response', (request, response) => {
-        let type = request.body.userResponse.type;
+        let type = request.body.userResponse;
         let currentTopic = request.query.topic;
 
-        let promise = new Promise((resolve, reject) => {
-            if (type === "good") {
-                goodResponse(currentTopic);
-                resolve();
-            } else if (type === "pass") {
-                passResponse(currentTopic);
-                resolve();
-            } else if (type === "bad") {
-                badResponse(currentTopic);
-                resolve();
-            } else {
-                reject();
-                throw new Error("bad study response: " + type);
-            }
-        });
-        promise.then(result => {
+        if (currentTopic.length > 0) {
+            let promise = new Promise((resolve, reject) => {
+                if (type === "good") {
+                    goodResponse(currentTopic);
+                    resolve();
+                } else if (type === "pass") {
+                    passResponse(currentTopic);
+                    resolve();
+                } else if (type === "bad") {
+                    badResponse(currentTopic);
+                    resolve();
+                } else {
+                    reject();
+                    throw new Error("bad study response: " + type);
+                }
+            });
+            promise.then(result => {
+                response.sendStatus(200);
+            }, error => {
+                response.sendStatus(404);
+            })
+
+        } else {
             response.sendStatus(200);
-        }, error => {
-            response.sendStatus(404);
-        })
+        }
     });
 
     app.get('/api/topics', (request, response) => {

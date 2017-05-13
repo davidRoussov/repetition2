@@ -4,6 +4,7 @@ import { SplitButton } from 'react-bootstrap';
 import { MenuItem } from 'react-bootstrap';
 
 import TopicsStore from "../stores/TopicsStore.js";
+import * as TopicActions from "../actions/TopicActions.js";
 
 export default class Header extends React.Component {
 
@@ -14,13 +15,13 @@ export default class Header extends React.Component {
   }
 
   componentWillMount() {
-    this.getTopics();
-  }
-
-  getTopics() {
     TopicsStore.fetchTopics(topics => {
       this.setState({topics: topics});
     });
+  }
+
+  topicClick(topicID) {
+    TopicActions.chooseTopic(topicID);
   }
 
   render() {
@@ -32,7 +33,8 @@ export default class Header extends React.Component {
     };
 
     const topicButtonStyle = {
-      borderRadius: "0px"
+      borderRadius: "0px",
+      width: "80%"
     };
 
 
@@ -43,7 +45,7 @@ export default class Header extends React.Component {
 
           return (
             <div key={index}>
-              <SplitButton id={index} title={topic.topicName} style={topicButtonStyle} className="btn-group">
+              <SplitButton id={index} title={topic.topicName} style={topicButtonStyle} className="btn-group" onClick={this.topicClick.bind(this, topic._id)}>
                 <MenuItem href="#books">Books</MenuItem>
                 <MenuItem href="#podcasts">Podcasts</MenuItem>
                 <MenuItem href="#">Tech I Like</MenuItem>
@@ -60,3 +62,21 @@ export default class Header extends React.Component {
     );
   }
 }
+
+
+          /*return (
+
+            <div key={index} className="btn-group">
+              <button type="button" className="btn btn-default">{topic.topicName}</button>
+              <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <span className="caret"></span>
+                <span className="sr-only">Toggle Dropdown</span>
+              </button>
+              <ul className="dropdown-menu">
+                <li><a href="#">Delete</a></li>
+                <li><a href="#">Edit</a></li>
+              </ul>
+            </div>
+
+
+          )*/

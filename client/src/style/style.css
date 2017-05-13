@@ -6,6 +6,20 @@ button {
 	outline: none !important;
 }
 
+
+
+/* okay I hate this, but I don't know how to style SplitButton to get it to neatly fit the sidebar */
+.dropdown.btn-group {
+	width: 100% !important;
+}
+.dropdown-toggle.btn.btn-default {
+	width: 20% !important;
+}
+
+
+
+
+
 /* STUDY PANEL*/
 .study-textarea-obscured {
 	background-color: lightgray !important;
