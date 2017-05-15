@@ -26,3 +26,8 @@ button {
 	color: lightgray !important;
 	user-select: none;
 }
+
+/* highlighting selected topic */
+.selected-topic, .selected-topic:focus {
+	color: green;
+}

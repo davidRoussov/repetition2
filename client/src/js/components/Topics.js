@@ -6,6 +6,8 @@ import { MenuItem } from 'react-bootstrap';
 import TopicsStore from "../stores/TopicsStore.js";
 import * as TopicActions from "../actions/TopicActions.js";
 
+const $ = require('jquery');
+
 export default class Header extends React.Component {
 
   constructor() {
@@ -20,7 +22,12 @@ export default class Header extends React.Component {
     });
   }
 
-  topicClick(topicID) {
+  topicClick(topicID, event) {
+
+    $(".selected-topic").removeClass("selected-topic");
+    $(event.target).addClass("selected-topic");
+    $(event.target).next().addClass("selected-topic");
+
     TopicActions.chooseTopic(topicID);
   }
 
@@ -46,11 +53,8 @@ export default class Header extends React.Component {
           return (
             <div key={index}>
               <SplitButton id={index} title={topic.topicName} style={topicButtonStyle} className="btn-group" onClick={this.topicClick.bind(this, topic._id)}>
-                <MenuItem href="#books">Books</MenuItem>
-                <MenuItem href="#podcasts">Podcasts</MenuItem>
-                <MenuItem href="#">Tech I Like</MenuItem>
-                <MenuItem href="#">About me</MenuItem>
-                <MenuItem href="#addBlog">Add a Blog</MenuItem>
+                <MenuItem href="#books">Edit</MenuItem>
+                <MenuItem href="#podcasts">Delete</MenuItem>
               </SplitButton>  
               <br/>
             </div>

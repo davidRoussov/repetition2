@@ -16,22 +16,19 @@ export default class Study extends React.Component {
   componentWillMount() {
     this.setCurrentProblem();
     StudyStore.on('change', topicID => {
-      this.setCurrentProblem.bind(this, topicID);
+      this.setCurrentProblem(topicID);
     });
   }
 
   setCurrentProblem(topicID) {
     this.setState({currentTopicID: topicID}, function() {
-
       StudyStore.fetchQuestion(this.state.currentTopicID, question => {
         this.setState({
           questionHidden: true,
           current: question
         });
       });
-
     });
-
   }
 
   flipQuestion(event) {
