@@ -6,14 +6,20 @@ module.exports = function(app) {
     app.get('/api/question', (request, response) => {
         db.findOne({}, function(error, doc) {
             try {
-                response.json(
+                const attempt = 
                     doc.topics
                         .find(topic => topic._id === request.query.topic)
                         .content
-                        .sort(compare)[0])
+                        .sort(compare)[0];
+                if (attempt) {
+                    response.json(attempt);
+                } else {
+                    response.json({question: "", answer: ""});
+                }
             } catch(err) {
                 response.json({question: "", answer: ""});
             }
+
         });
     });
 

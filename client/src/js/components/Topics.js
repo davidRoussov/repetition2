@@ -66,21 +66,3 @@ export default class Header extends React.Component {
     );
   }
 }
-
-
-          /*return (
-
-            <div key={index} className="btn-group">
-              <button type="button" className="btn btn-default">{topic.topicName}</button>
-              <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                <span className="caret"></span>
-                <span className="sr-only">Toggle Dropdown</span>
-              </button>
-              <ul className="dropdown-menu">
-                <li><a href="#">Delete</a></li>
-                <li><a href="#">Edit</a></li>
-              </ul>
-            </div>
-
-
-          )*/
