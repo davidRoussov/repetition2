@@ -1,6 +1,15 @@
 import React from "react";
 
+import * as AddActions from "../../actions/AddActions";
+
 export default class Add extends React.Component {
+
+  submitNewQuestion() {
+    let question = document.getElementById("questionInput").value;
+    let answer = document.getElementById("answerInput").value;
+
+    AddActions.submitNewProblem({question: question, answer: answer});
+  }
 
   render() {
 
@@ -37,11 +46,11 @@ export default class Add extends React.Component {
 
         <h1 style={headingStyle}>Add</h1>
 
-        <input style={inputStyle} type="text" className="form-control" />
+        <input id="questionInput" style={inputStyle} type="text" className="form-control" />
 
-        <textarea id="studyTextarea" style={textareaStyle} className="form-control"></textarea>
+        <textarea id="answerInput" style={textareaStyle} className="form-control"></textarea>
 
-        <button type="text" className="btn btn-success">Submit</button>
+        <button type="text" className="btn btn-success" onClick={this.submitNewQuestion.bind(this)}>Submit</button>
 
       </div>
 
