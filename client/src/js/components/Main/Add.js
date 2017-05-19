@@ -1,14 +1,49 @@
 import React from "react";
 
 import * as AddActions from "../../actions/AddActions";
+import AddStore from "../../stores/AddStore";
 
 export default class Add extends React.Component {
+
+  constructor() {
+    super();
+    this.state = {["currentTopicID"]: ""};
+  }
+
+  componentWillMount() {
+    AddStore.on('change', topicID => {
+      console.log("hi there", topicID);
+      this.setState({currentTopicID: topicID});
+    });
+  }
 
   submitNewQuestion() {
     let question = document.getElementById("questionInput").value;
     let answer = document.getElementById("answerInput").value;
 
     AddActions.submitNewProblem({question: question, answer: answer});
+
+
+    const newProblem = {
+      topicID: this.state.currentTopicID,
+      question: question,
+      answer: answer
+    }
+
+    fetch('/api/submitnewproblem', {
+      headers: {
+        'Accept': 'application/json',
+        'Content-type': 'application/json'
+      },
+      method: 'POST',
+      body: JSON.stringify( newProblem )
+    })
+    .then(checkAndUpdate)
+
+    function checkAndUpdate(response) {
+      console.log("update complete");
+      console.log(response);
+    }
   }
 
   render() {

@@ -1,6 +1,7 @@
 const app = require('express');
 var Datastore = require('nedb')
   , db = new Datastore({ filename: './db/db', autoload: 'true' });
+const uniqid = require('uniqid');
 
 module.exports = function(app) {
     app.get('/api/question', (request, response) => {
@@ -62,6 +63,43 @@ module.exports = function(app) {
                         _id: topic._id,
                         topicName: topic.topicName
                     })));
+        });
+    });
+
+    app.post('/api/submitnewproblem', (request, response) => {
+        const newQuestion = request.body.question;
+        const newAnswer = request.body.answer;
+        const topicID = request.body.topicID;
+
+        const promise = new Promise((resolve, reject) => {  
+            submitNewProblem(topicID, newQuestion, newAnswer);
+            resolve();
+        });
+
+        promise.then(result => {
+            response.sendStatus(200);
+        }, error => {
+            response.sendStatus(400);
+        });
+    });
+}
+
+function submitNewProblem(topicID, question, answer) {
+    db.findOne({}, function(err, doc) {
+        getHighestRank(topicID, rank => {
+            doc.topics
+                .find(topic => topic._id === topicID)
+                .content
+                .push({
+                    _id: uniqid(),
+                    question: question,
+                    answer: answer,
+                    rank: rank + 1
+                });
+                
+            db.update({_id: doc._id}, doc, function(err, response) {
+                console.log("err", err);
+            });
         });
     });
 }

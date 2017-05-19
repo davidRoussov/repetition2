@@ -40,8 +40,7 @@ class StudyStore extends EventEmitter {
 		} else if (action.type === "CHOOSE_TOPIC") {
 			this.emit("change", action.topicID);
 		} else if (action.type === "SUBMIT_NEW_PROBLEM") {
-
-			
+			this.emit("change");
 		}
 	}
 }
