@@ -1,4 +1,5 @@
 import React from "react";
+const $ = require("jquery");
 
 import * as AddActions from "../../actions/AddActions";
 import AddStore from "../../stores/AddStore";
@@ -12,17 +13,22 @@ export default class Add extends React.Component {
 
   componentWillMount() {
     AddStore.on('change', topicID => {
-      console.log("hi there", topicID);
       this.setState({currentTopicID: topicID});
     });
   }
 
   submitNewQuestion() {
+
+    if (!this.state.currentTopicID || this.state.currentTopicID.length === 0) {
+      $("#addNewProblemErrorMessage").removeClass("hidden");
+      setTimeout(() => {
+        $("#addNewProblemErrorMessage").addClass("hidden");
+      }, 1000);
+      return;
+    }
+
     let question = document.getElementById("questionInput").value;
     let answer = document.getElementById("answerInput").value;
-
-    AddActions.submitNewProblem({question: question, answer: answer});
-
 
     const newProblem = {
       topicID: this.state.currentTopicID,
@@ -41,8 +47,10 @@ export default class Add extends React.Component {
     .then(checkAndUpdate)
 
     function checkAndUpdate(response) {
-      console.log("update complete");
-      console.log(response);
+      $("#questionInput").val("");
+      $("#answerInput").val("");
+
+      AddActions.submissionComplete();
     }
   }
 
@@ -75,6 +83,10 @@ export default class Add extends React.Component {
       borderRadius: "0"
     }
 
+    const errorMessageStyle = {
+      color: "red"
+    }
+
     return (
 
       <div style={AddPaneStyle}>
@@ -87,6 +99,7 @@ export default class Add extends React.Component {
 
         <button type="text" className="btn btn-success" onClick={this.submitNewQuestion.bind(this)}>Submit</button>
 
+        <p style={errorMessageStyle} className="hidden" id="addNewProblemErrorMessage">You need to select a topic</p>
       </div>
 
     );

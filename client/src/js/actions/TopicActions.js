@@ -5,4 +5,10 @@ export function chooseTopic(topicID) {
 		type: "CHOOSE_TOPIC",
         topicID: topicID
 	});
-}
+};
+
+export function newTopicSubmitted() {
+	dispatcher.dispatch({
+		type: "NEW_TOPIC_SUBMITTED"
+	});
+};

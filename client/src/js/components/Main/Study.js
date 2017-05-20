@@ -22,7 +22,6 @@ export default class Study extends React.Component {
 
   setCurrentProblem(topicID) {
 
-    console.log(topicID);
     if (!topicID) topicID = this.state.currentTopicID;
 
     this.setState({currentTopicID: topicID}, function() {

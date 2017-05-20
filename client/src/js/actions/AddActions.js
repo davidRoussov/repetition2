@@ -1,8 +1,7 @@
 import dispatcher from "../dispatcher";
 
-export function submitNewProblem(problem) {
+export function submissionComplete() {
 	dispatcher.dispatch({
-		type: "SUBMIT_NEW_PROBLEM",
-        payload: problem
+		type: "NEW_PROBLEM_SUBMISSION_COMPLETE"
 	});
 }

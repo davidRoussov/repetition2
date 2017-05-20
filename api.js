@@ -5,6 +5,7 @@ const uniqid = require('uniqid');
 
 module.exports = function(app) {
     app.get('/api/question', (request, response) => {
+
         db.findOne({}, function(error, doc) {
             try {
                 const attempt = 
@@ -72,8 +73,13 @@ module.exports = function(app) {
         const topicID = request.body.topicID;
 
         const promise = new Promise((resolve, reject) => {  
-            submitNewProblem(topicID, newQuestion, newAnswer);
-            resolve();
+            submitNewProblem(topicID, newQuestion, newAnswer, function(err) {
+                if (!err) {
+                    resolve();
+                } else {
+                    reject();
+                }
+            });
         });
 
         promise.then(result => {
@@ -82,23 +88,70 @@ module.exports = function(app) {
             response.sendStatus(400);
         });
     });
+
+    app.post('/api/submit-new-topic', (request, response) => {
+        const newTopic = request.body.newTopic;
+
+        const promise = new Promise((resolve, reject) => {
+
+            submitNewTopic(newTopic, function(err) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
+
+        });
+        promise.then(result => {
+            response.sendStatus(200);
+        }, error => {
+            response.sendStatus(400);
+        });
+    });
 }
 
-function submitNewProblem(topicID, question, answer) {
+function submitNewTopic(newTopic, callback) {
+    db.findOne({}, function(err, doc) {
+        doc.topics
+            .push({
+                _id: uniqid(),
+                topicName: newTopic,
+                content: []
+            });
+        db.update({_id: doc._id}, doc, function(err) {
+            if (err) {
+                callback(err);
+            } else {
+                callback();
+            }
+        });
+    });
+}
+
+function submitNewProblem(topicID, question, answer, callback) {
     db.findOne({}, function(err, doc) {
         getHighestRank(topicID, rank => {
-            doc.topics
-                .find(topic => topic._id === topicID)
-                .content
-                .push({
-                    _id: uniqid(),
-                    question: question,
-                    answer: answer,
-                    rank: rank + 1
-                });
-                
+            try {
+                doc.topics
+                    .find(topic => topic._id === topicID)
+                    .content
+                    .push({
+                        _id: uniqid(),
+                        question: question,
+                        answer: answer,
+                        rank: rank + 1
+                    });
+            } catch(err) {
+                callback("couldn't find topic");
+            }
+
             db.update({_id: doc._id}, doc, function(err, response) {
-                console.log("err", err);
+                if (err) {
+                    callback(err);
+                } else {
+                    callback();
+                }
             });
         });
     });
@@ -151,13 +204,18 @@ function updateRank(topicID, newRank) {
 
 function getHighestRank(topicID, callback) {
     db.findOne({}, function(error, doc) {
-       callback(
-           doc.topics
-            .find(topic => topic._id === topicID)
-            .content
-            .sort(compare)
-            .slice(-1)[0]
-            .rank);
+        try {
+            callback(
+                doc.topics
+                    .find(topic => topic._id === topicID)
+                    .content
+                    .sort(compare)
+                    .slice(-1)[0]
+                    .rank);
+        } catch(err) {
+            // no content?
+            callback(1);
+        }
     });
 }
 

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { SplitButton } from 'react-bootstrap';
+import { SplitButton, Modal, Button, FormControl } from 'react-bootstrap';
 import { MenuItem } from 'react-bootstrap';
 
 import TopicsStore from "../stores/TopicsStore.js";
@@ -12,11 +12,17 @@ export default class Header extends React.Component {
 
   constructor() {
     super();
-    this.state = {};
-    this.state.topics = [];
+    this.state = {["topics"]: [], ["showModal"]: false};
   }
 
   componentWillMount() {
+    this.getCurrentTopics();
+    TopicsStore.on('change', () => {
+      this.getCurrentTopics();
+    })
+  }
+
+  getCurrentTopics() {
     TopicsStore.fetchTopics(topics => {
       this.setState({topics: topics});
     });
@@ -31,6 +37,39 @@ export default class Header extends React.Component {
     TopicActions.chooseTopic(topicID);
   }
 
+  submitNewTopic() {
+    
+    const newTopicName = $("#newTopicName").val();
+    
+    fetch('/api/submit-new-topic', {
+      headers: {
+        'Accept': 'application/json',
+        'Content-type': 'application/json'
+      },
+      method: 'POST',
+      body: JSON.stringify( {newTopic: newTopicName})
+    })
+    .then((response) => {
+      TopicActions.newTopicSubmitted();
+      this.close();
+    });
+
+  }
+
+  open() {
+    this.setState({showModal: true});
+  }
+
+  close() {
+    this.setState({showModal: false});  
+  }
+
+  detectEnterSubmit = (e) => {
+    if (e.keyCode === 13) {
+      this.submitNewTopic();
+    }
+  }
+
   render() {
     const topicSidebarStyle = {
       height: "100vh",
@@ -43,6 +82,11 @@ export default class Header extends React.Component {
       borderRadius: "0px",
       width: "80%"
     };
+
+    const addNewTopicButtonStyle = {
+      borderRadius: "0px",
+      width: "100%"
+    }
 
 
     return (
@@ -61,6 +105,45 @@ export default class Header extends React.Component {
           )
 
         })}
+
+
+
+        <Button
+          bsStyle="primary"
+          bsSize="xs"
+          onClick={this.open.bind(this)}
+          style={addNewTopicButtonStyle}
+        >
+          Add new topic
+        </Button>
+
+
+        <Modal show={this.state.showModal} onHide={this.close}>
+          <Modal.Header closeButton>
+            <Modal.Title>Enter new topic name</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <FormControl
+              id="newTopicName"
+              type="text"
+              placeholder="Enter new topic"
+              onKeyUp={this.detectEnterSubmit}
+            />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.close.bind(this)}>Close</Button>
+            <Button
+              bsStyle="primary"
+              onClick={this.submitNewTopic.bind(this)}
+            >
+              Submit
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+
+
+
 
       </div>
     );
