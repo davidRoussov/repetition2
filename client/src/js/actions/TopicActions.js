@@ -12,3 +12,9 @@ export function newTopicSubmitted() {
 		type: "NEW_TOPIC_SUBMITTED"
 	});
 };
+
+export function topicDeleted() {
+	dispatcher.dispatch({
+		type: "TOPIC_DELETED"
+	});
+}

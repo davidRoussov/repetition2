@@ -27,6 +27,9 @@ class TopicsStore extends EventEmitter {
 		else if (action.type === "NEW_TOPIC_SUBMITTED") {
 			this.emit("change");
 		}
+		else if (action.type === "TOPIC_DELETED") {
+			this.emit("change");
+		}
 	}
 }
 

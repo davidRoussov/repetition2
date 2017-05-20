@@ -109,6 +109,48 @@ module.exports = function(app) {
             response.sendStatus(400);
         });
     });
+
+    app.delete('/api/topics/delete', (request, response) => {
+        const topicID = request.body.topicID;
+
+        const promise = new Promise((resolve, reject) => {
+
+            deleteTopic(topicID, function(err) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
+
+        });
+
+        promise.then(result => {
+            response.sendStatus(200);
+        }, error => {
+            response.sendStatus(400);
+        });
+    });
+}
+
+function deleteTopic(topicID, callback) {
+    db.findOne({}, (err, doc) => {
+        try {
+            doc.topics = doc.topics
+                .filter(topic => topic._id !== topicID)
+            
+
+            db.update({_id: doc._id}, doc, function(err) {
+                if (err) {
+                    callback(err);
+                } else {
+                    callback();
+                }
+            });                            
+        } catch(err) {
+            callback(err);
+        }
+    });
 }
 
 function submitNewTopic(newTopic, callback) {

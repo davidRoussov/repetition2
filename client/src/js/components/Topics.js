@@ -70,6 +70,21 @@ export default class Header extends React.Component {
     }
   }
 
+  deleteTopic(topicID) {
+    fetch('/api/topics/delete', {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: "DELETE",
+      body: JSON.stringify( {topicID: topicID} )
+    })
+    .then(response => {
+      console.log("updated");
+      console.log(response);
+      TopicActions.topicDeleted();
+    })
+  }
+
   render() {
     const topicSidebarStyle = {
       height: "100vh",
@@ -98,7 +113,7 @@ export default class Header extends React.Component {
             <div key={index}>
               <SplitButton id={index} title={topic.topicName} style={topicButtonStyle} className="btn-group" onClick={this.topicClick.bind(this, topic._id)}>
                 <MenuItem href="#books">Edit</MenuItem>
-                <MenuItem href="#podcasts">Delete</MenuItem>
+                <MenuItem onClick={this.deleteTopic.bind(this, topic._id)}>Delete</MenuItem>
               </SplitButton>  
               <br/>
             </div>
