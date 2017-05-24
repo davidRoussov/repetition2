@@ -18,3 +18,9 @@ export function topicDeleted() {
 		type: "TOPIC_DELETED"
 	});
 }
+
+export function topicNameChanged() {
+	dispatcher.dispatch({
+		type: "TOPIC_NAME_CHANGE"
+	});
+}

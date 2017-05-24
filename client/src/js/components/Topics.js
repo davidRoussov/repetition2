@@ -12,7 +12,11 @@ export default class Header extends React.Component {
 
   constructor() {
     super();
-    this.state = {["topics"]: [], ["showModal"]: false};
+    this.state = {
+      ["topics"]: [], 
+      ["showModal"]: false,
+      ["showModalEdit"]: false
+    };
   }
 
   componentWillMount() {
@@ -56,17 +60,48 @@ export default class Header extends React.Component {
 
   }
 
+  submitTopicEdit(topicID) {
+    const newTopicName = $("#newTopicNameEdit-" + topicID).val();
+
+    fetch('/api/edit-topic-name', {
+      headers: {
+        'Accept': 'application/json',
+        'Content-type': 'application/json'
+      },
+      method: 'POST',
+      body: JSON.stringify( {newTopicName: newTopicName, topicID: topicID})
+    })
+    .then((response) => {
+      TopicActions.topicNameChanged();
+      this.closeEditModal();
+    })
+  }
+
   open() {
     this.setState({showModal: true});
+  }
+
+  openEditModal() {
+    this.setState({showEditModal: true});
   }
 
   close() {
     this.setState({showModal: false});  
   }
 
+  closeEditModal() {
+    this.setState({showEditModal: false});
+  }
+
   detectEnterSubmit = (e) => {
     if (e.keyCode === 13) {
       this.submitNewTopic();
+    }
+  }
+
+  detectEnterSubmitEdit(topicID, e) {
+    if (e.keyCode === 13) {
+      this.submitTopicEdit(topicID);
     }
   }
 
@@ -79,8 +114,6 @@ export default class Header extends React.Component {
       body: JSON.stringify( {topicID: topicID} )
     })
     .then(response => {
-      console.log("updated");
-      console.log(response);
       TopicActions.topicDeleted();
     })
   }
@@ -112,26 +145,48 @@ export default class Header extends React.Component {
           return (
             <div key={index}>
               <SplitButton id={index} title={topic.topicName} style={topicButtonStyle} className="btn-group" onClick={this.topicClick.bind(this, topic._id)}>
-                <MenuItem href="#books">Edit</MenuItem>
+                <MenuItem onClick={this.openEditModal.bind(this)}>Edit</MenuItem>
                 <MenuItem onClick={this.deleteTopic.bind(this, topic._id)}>Delete</MenuItem>
               </SplitButton>  
               <br/>
+
+              <Modal show={this.state.showEditModal} onHide={this.closeEditModal.bind(this)}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Enter new topic name</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <FormControl
+                    id={"newTopicNameEdit-" + topic._id}
+                    type="text"
+                    placeholder="Enter new topic"
+                    onKeyUp={this.detectEnterSubmitEdit.bind(this, topic._id)}
+                  />
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button onClick={this.closeEditModal.bind(this)}>Close</Button>
+                  <Button
+                    bsStyle="primary"
+                    onClick={this.submitTopicEdit.bind(this, topic._id)}
+                  >
+                    Submit
+                  </Button>
+                </Modal.Footer>
+              </Modal>
+
             </div>
+       
           )
 
         })}
 
-
-
         <Button
-          bsStyle="primary"
+          bsStyle="info"
           bsSize="xs"
           onClick={this.open.bind(this)}
           style={addNewTopicButtonStyle}
         >
           Add new topic
         </Button>
-
 
         <Modal show={this.state.showModal} onHide={this.close}>
           <Modal.Header closeButton>
@@ -155,10 +210,6 @@ export default class Header extends React.Component {
             </Button>
           </Modal.Footer>
         </Modal>
-
-
-
-
 
       </div>
     );

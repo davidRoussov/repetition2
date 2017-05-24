@@ -2,10 +2,9 @@
 	border-radius: 0px !important;
 }
 
-button {
+button, button:focus {
 	outline: none !important;
 }
-
 
 
 /* okay I hate this, but I don't know how to style SplitButton to get it to neatly fit the sidebar */

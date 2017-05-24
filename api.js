@@ -110,6 +110,28 @@ module.exports = function(app) {
         });
     });
 
+    app.post('/api/edit-topic-name', (request, response) => {
+        const newTopicName = request.body.newTopicName;
+        const topicID = request.body.topicID;
+
+        new Promise((resolve, reject) => {
+
+            submitEditTopic(topicID, newTopicName, function(err) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
+
+        })
+        .then(result => {
+            response.sendStatus(200);
+        }, error => {
+            response.sendStatus(400);
+        });
+    });
+
     app.delete('/api/topics/delete', (request, response) => {
         const topicID = request.body.topicID;
 
@@ -130,6 +152,8 @@ module.exports = function(app) {
         }, error => {
             response.sendStatus(400);
         });
+
+
     });
 }
 
@@ -151,6 +175,27 @@ function deleteTopic(topicID, callback) {
             callback(err);
         }
     });
+}
+
+function submitEditTopic(topicID, newTopicName, callback) {
+    console.log(newTopicName);
+
+    db.findOne({}, function(err, doc) {
+        
+        doc.topics
+            .find(topic => topic._id === topicID)
+            .topicName = newTopicName;
+
+        db.update({_id: doc._id}, doc, function(err) {
+            if (err) {
+                callback(err);
+            } else {
+                callback();
+            }
+        });
+
+    });
+
 }
 
 function submitNewTopic(newTopic, callback) {

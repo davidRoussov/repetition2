@@ -30,6 +30,9 @@ class TopicsStore extends EventEmitter {
 		else if (action.type === "TOPIC_DELETED") {
 			this.emit("change");
 		}
+		else if (action.type === "TOPIC_NAME_CHANGE") {
+			this.emit("change");
+		}
 	}
 }
 
