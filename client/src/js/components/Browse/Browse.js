@@ -5,7 +5,6 @@ export default class Layout extends React.Component {
   render() {
     return (
       <div>
-      	<h1>hello ayyayay</h1>
       </div>
     );
   }

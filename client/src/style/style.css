@@ -27,6 +27,6 @@ button, button:focus {
 }
 
 /* highlighting selected topic */
-.selected-topic, .selected-topic:focus {
+.selected-topic, .selected-topic:focus, .selected-topic:hover {
 	color: green;
 }
