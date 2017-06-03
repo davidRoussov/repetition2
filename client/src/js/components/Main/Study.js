@@ -67,6 +67,9 @@ export default class Study extends React.Component {
 
   responseSubmission(response) {
     StudyActions.submitResponse(response, this.state.currentTopicID);
+
+    $("#hideRevealButton").text("Reveal");
+    $("#studyTextarea").addClass("study-textarea-obscured");
   }
 
   render() {
@@ -112,7 +115,7 @@ export default class Study extends React.Component {
         <textarea id="studyTextarea" style={textareaStyle} className="form-control study-textarea-obscured" disabled={this.state.questionHidden} value={currentAnswer} onChange={this.modifyAnswer.bind(this)}></textarea>
 
         <div className="btn-group" role="group" aria-label="...">
-          <button type="button" className="btn btn-primary" onClick={this.flipQuestion.bind(this)}>Reveal</button>
+          <button id="hideRevealButton" type="button" className="btn btn-primary" onClick={this.flipQuestion.bind(this)}>Reveal</button>
           <button type="button" className="btn btn-success" onClick={this.responseSubmission.bind(this, "good")}>Good</button>
           <button type="button" className="btn btn-warning" onClick={this.responseSubmission.bind(this, "pass")}>Pass</button>
           <button type="button" className="btn btn-danger" onClick={this.responseSubmission.bind(this, "bad")}>Bad</button>
