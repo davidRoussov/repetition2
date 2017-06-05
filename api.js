@@ -155,6 +155,30 @@ module.exports = function(app) {
 
 
     });
+
+    app.get('/api/all-questions', (request, response) => {
+        const topicID = request.query.topic;
+
+        new Promise((resolve, reject) => {
+            
+        })
+        .then(result => {
+
+        }, error => {
+            response.sendStatus(400);
+        });
+    });
+}
+
+function getAllQuestions(topicID) {
+
+    db.findOne({}, (err, doc) => {
+        try {
+
+        } catch (err) {
+            return false;
+        }
+    });
 }
 
 function deleteTopic(topicID, callback) {
